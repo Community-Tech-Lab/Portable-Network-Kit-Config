@@ -1,0 +1,25 @@
+# Build output
+/target/
+
+# Cargo.lock: keep it for binaries, ignore it for libraries
+# Cargo.lock
+
+# Rustfmt backup files
+**/*.rs.bk
+
+# Debug symbols (MSVC on Windows)
+*.pdb
+
+# Environment files
+.env
+
+# Editor and IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db

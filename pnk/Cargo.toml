@@ -1,6 +1,9 @@
 [package]
-name = "pnk-controller"
+name = "pnk"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+clap = { version = "4.6.7", features = ["derive"] }
+docker-wrapper = "0.11.2"
+tokio = "1.53.1"
