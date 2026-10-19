@@ -1,5 +1,6 @@
 use clap::{Parser, Subcommand};
-use docker_wrapper::{DockerCommand, PsCommand};
+mod status;
+mod update;
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 #[derive(Parser)]
@@ -18,30 +19,17 @@ enum Commands {
         #[arg(short, long)]
         container: Option<String>,
     },
-}
 
-async fn status(container_name: &Option<String>) -> Result<()> {
-    let name = container_name.as_deref();
-    match name {
-        None => {
-            let ps_cmd = PsCommand::new()
-                .format_template("table {{.ID}}\\t{{.Names}}\\t{{.Status}}\\t{{.Ports}}")
-                .execute()
-                .await?;
-            println!("{}", ps_cmd.stdout);
-            Ok(())
-        }
-
-        Some(name) => {
-            let ps_cmd = PsCommand::new()
-                .filter(format!("name={}", name))
-                .format_template("table {{.ID}}\\t{{.Names}}\\t{{.Status}}\\t{{.Ports}}")
-                .execute()
-                .await?;
-            println!("{}", ps_cmd.stdout);
-            Ok(())
-        }
-    }
+    Install {
+        /// Only show containers whose name contains this text
+        #[arg(short, long)]
+        container: Option<String>,
+    },
+    ///Updates the PNK CLI suite via the GitHub Repository
+    Update {
+        #[arg(short, long, default_value_t = 5000)]
+        timeout: u32,
+    },
 }
 
 #[tokio::main]
@@ -49,8 +37,16 @@ async fn main() -> Result<()> {
     let cli = Cli::parse();
     match &cli.command {
         Some(Commands::Status { container }) => {
-            status(container).await?;
+            status::status(container).await?;
         }
+
+        Some(Commands::Install { container }) => match container {
+            _ => {
+                println!("Installing something...")
+            }
+        },
+
+        Some(Commands::Update { timeout }) => update::update(*timeout).await,
 
         None => {}
     }
